@@ -16,28 +16,41 @@ export const App = (): JSX.Element => {
     difficultyLevels[0]
   )
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.GameWorks)
-  const initialGameBoard = generateMines(
-    generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight),
-    difficultyLevel
+  const initialGameBoard = generateCells(
+    difficultyLevel.boardWidth,
+    difficultyLevel.boardHeight
   )
+
   const [cells, setCells] = useState<CellType[][]>(initialGameBoard)
+  const [firstCell, setFirstCell] = useState<
+    { x: number; y: number } | undefined
+  >()
 
   const changeDifficultyLevel = (
     difficultyLevel: DiffucultyLevelType
   ): void => {
     setGameStatus(GameStatus.GameWorks)
     setDifficultyLevel(difficultyLevel)
+    setFirstCell(undefined)
     setCells(
-      generateMines(
-        generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight),
-        difficultyLevel
-      )
+      generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight)
     )
   }
 
   const onCellLeftClick = (board: CellType[][], x: number, y: number): void => {
+    let newCells
+    if (firstCell === undefined) {
+      setFirstCell({ x, y })
+      newCells = generateMines(cells, difficultyLevel, { x, y })
+      setCells(newCells)
+    }
     if (gameStatus === GameStatus.GameWorks) {
-      const [newBoard, newGameStatus] = openCells(board, x, y, difficultyLevel)
+      const [newBoard, newGameStatus] = openCells(
+        newCells ?? board,
+        x,
+        y,
+        difficultyLevel
+      )
 
       if (newGameStatus) {
         setGameStatus(newGameStatus)
@@ -54,6 +67,7 @@ export const App = (): JSX.Element => {
   const onGameRestart = (): void => {
     setCells(initialGameBoard)
     setGameStatus(GameStatus.GameWorks)
+    setFirstCell(undefined)
   }
 
   return (

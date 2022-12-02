@@ -23,7 +23,8 @@ const neighboursLocations = [-1, 0, 1]
  */
 export const generateMines = (
   board: CellType[][],
-  difficultyLevel: DiffucultyLevelType
+  difficultyLevel: DiffucultyLevelType,
+  firstCell: { x: number; y: number }
 ): CellType[][] => {
   let numberOfGeneratedMines = 0
 
@@ -34,6 +35,10 @@ export const generateMines = (
   while (numberOfGeneratedMines < requiredNumberOfMines) {
     const x = Math.floor(Math.random() * boardWidth)
     const y = Math.floor(Math.random() * boardHeight)
+
+    if (firstCell.x === x && firstCell.y === y) {
+      continue
+    }
 
     if (!board[y][x].isMine) {
       board[y][x].isMine = true
