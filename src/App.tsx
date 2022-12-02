@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Cell } from './components/Cell'
 import { DifficultyLevelButton } from './components/DifficultyLevelButton'
 import { difficultyLevels, DiffucultyLevelType } from './utils/difficultyLevel'
@@ -7,9 +7,8 @@ import {
   GameStatus,
   generateCells,
   generateMines,
-  placeMarker,
   openCells,
-  setNumberOfMinesAround,
+  placeMarker,
 } from './utils/game'
 
 export const App = (): JSX.Element => {
@@ -17,19 +16,11 @@ export const App = (): JSX.Element => {
     difficultyLevels[0]
   )
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.GameWorks)
-  const initialGameBoard = generateCells(
-    difficultyLevel.boardWidth,
-    difficultyLevel.boardHeight
+  const initialGameBoard = generateMines(
+    generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight),
+    difficultyLevel
   )
   const [cells, setCells] = useState<CellType[][]>(initialGameBoard)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (loading) {
-      setCells(generateMines(cells, difficultyLevel))
-      setLoading(false)
-    }
-  }, [loading])
 
   const changeDifficultyLevel = (
     difficultyLevel: DiffucultyLevelType
@@ -37,10 +28,11 @@ export const App = (): JSX.Element => {
     setGameStatus(GameStatus.GameWorks)
     setDifficultyLevel(difficultyLevel)
     setCells(
-      generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight)
+      generateMines(
+        generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight),
+        difficultyLevel
+      )
     )
-    setCells((cells) => generateMines(cells, difficultyLevel))
-    setCells((cells) => setNumberOfMinesAround(cells))
   }
 
   const onCellLeftClick = (board: CellType[][], x: number, y: number): void => {
@@ -59,27 +51,20 @@ export const App = (): JSX.Element => {
     setCells((cells) => placeMarker(cells, x, y))
   }
 
-  const onRestart = (): void => {
-    setLoading(true)
+  const onGameRestart = (): void => {
     setCells(initialGameBoard)
-    setCells((cells) => generateMines(cells, difficultyLevel))
-    setCells((cells) => setNumberOfMinesAround(cells))
-    setLoading(false)
     setGameStatus(GameStatus.GameWorks)
   }
-
-  useEffect(() => {
-    setCells(cells)
-  }, [cells])
 
   return (
     <div className="flex flex-col flex-wrap items-center content-center justify-center min-h-screen bg-slate-800">
       <h1 className="text-2xl text-white md:text-4xl">
         {gameStatusInformation(gameStatus)}
       </h1>
+
       <h2
         className="inline-block px-3 py-1 my-2 text-base font-medium text-center text-white rounded-md cursor-pointer md:my-3 md:text-xl bg-slate-700 hover:bg-slate-500"
-        onClick={onRestart}
+        onClick={onGameRestart}
       >
         Restart game
       </h2>
@@ -93,23 +78,19 @@ export const App = (): JSX.Element => {
           e: React.MouseEvent<HTMLDivElement, MouseEvent>
         ): void => e.preventDefault()}
       >
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          cells.map((cellsRow, j) =>
-            cellsRow.map((cell, i) => (
-              <Cell
-                key={j + i}
-                onCellLeftClick={(): void => onCellLeftClick(cells, i, j)}
-                onCellRightClick={(): void => onCellRightClick(i, j)}
-                isGameWon={gameStatus === GameStatus.GameWon}
-                isMine={cell.isMine}
-                isOpen={cell.isOpen}
-                isMarked={cell.isMarked}
-                minesAround={cell.minesAround}
-              />
-            ))
-          )
+        {cells.map((cellsRow, j) =>
+          cellsRow.map((cell, i) => (
+            <Cell
+              key={j + i}
+              onCellLeftClick={(): void => onCellLeftClick(cells, i, j)}
+              onCellRightClick={(): void => onCellRightClick(i, j)}
+              isGameWon={gameStatus === GameStatus.GameWon}
+              isMine={cell.isMine}
+              isOpen={cell.isOpen}
+              isMarked={cell.isMarked}
+              minesAround={cell.minesAround}
+            />
+          ))
         )}
       </div>
 
@@ -124,6 +105,7 @@ export const App = (): JSX.Element => {
           />
         ))}
       </div>
+
       <h3 className="mt-1 text-base text-white md:text-lg">Difficulty Level</h3>
     </div>
   )
