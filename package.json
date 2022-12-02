@@ -2,7 +2,7 @@
   "name": "minesweeper_ts",
   "author": "Karol Stawowski",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
