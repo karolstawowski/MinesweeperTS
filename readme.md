@@ -4,6 +4,8 @@
 ![License](https://img.shields.io/github/license/karolstawowski/MinesweeperTS?color=3993fa)
 ![Version](https://img.shields.io/badge/version-0.0.1-3993fa) <br>
 
+### <a href="https://karolstawowski.github.io/MinesweeperTS/">Click here to see website!</a>
+
 ## Description
 
 Here's my <b>React/TypeScript</b> implementation of popular game called 'Minesweeper' made by Robert Donner.
