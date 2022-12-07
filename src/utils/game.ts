@@ -132,7 +132,7 @@ export const openCells = (
   y: number,
   difficultyLevel: DiffucultyLevelType
 ): [gameBoard: CellType[][], gameStatus: GameStatus] => {
-  if (!board[y][x].isOpen) {
+  if (!board[y][x].isOpen && !board[y][x].isMarked) {
     if (board[y][x].isMine) {
       board = openAllMineCells(board)
 
