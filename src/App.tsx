@@ -114,7 +114,7 @@ export const App = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center select-none">
         <div
           style={{
             gridTemplateColumns: `repeat(${difficultyLevel.boardWidth}, minmax(0, 1fr))`,
