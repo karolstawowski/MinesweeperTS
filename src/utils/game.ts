@@ -16,6 +16,17 @@ export enum GameStatus {
 const neighboursLocations = [-1, 0, 1]
 
 /**
+ * @description Counts marked cells across the game board
+ * @param  {CellType[][]} board
+ * @returns {number} Number of marked cells
+ */
+export const countFlaggedCells = (board: CellType[][]): number => {
+  return board
+    .map((row) => row.filter((cell) => cell.isMarked).length)
+    .reduce((num, a) => num + a, 0)
+}
+
+/**
  * @description Assigns mines to random cells of the game board
  * @param  {CellType[][]} board - Game board
  * @param  {DiffucultyLevelType} difficultyLevel- Difficulty level containing game board dimensions and number of mines to assign
