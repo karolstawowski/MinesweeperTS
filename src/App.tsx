@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Cell } from './components/Cell'
 import { DifficultyLevelButton } from './components/DifficultyLevelButton'
+import { useLocalStorage } from './hooks/useLocalStorage'
 import { difficultyLevels, DiffucultyLevelType } from './utils/difficultyLevel'
 import {
   CellType,
@@ -13,13 +14,12 @@ import {
 } from './utils/game'
 
 export const App = (): JSX.Element => {
-  const [difficultyLevel, setDifficultyLevel] = useState<DiffucultyLevelType>(
-    difficultyLevels[0]
-  )
+  const [gameDifficultyLevel, setGameDifficultyLevel] =
+    useState<DiffucultyLevelType>(difficultyLevels[0])
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.GameWorks)
   const initialGameBoard = generateCells(
-    difficultyLevel.boardWidth,
-    difficultyLevel.boardHeight
+    gameDifficultyLevel.boardWidth,
+    gameDifficultyLevel.boardHeight
   )
 
   const [cells, setCells] = useState<CellType[][]>(initialGameBoard)
@@ -28,35 +28,67 @@ export const App = (): JSX.Element => {
   >()
   const [gameDuration, setGameDuration] = useState<number>(0)
   const gameInterval = useRef<number>()
+  const [bestScore, setBestScore] = useLocalStorage<number>(
+    'minesweeperBestScore'.concat(gameDifficultyLevel.level.toString()),
+    -1
+  )
+
+  useEffect(() => {
+    if (gameStatus === GameStatus.GameWon) {
+      const newBestScore =
+        bestScore > gameDuration || bestScore < 0 ? gameDuration : bestScore
+
+      setBestScore(newBestScore)
+      clearInterval(gameInterval.current)
+    } else if (gameStatus === GameStatus.GameOver) {
+      clearInterval(gameInterval.current)
+    }
+  }, [gameStatus, bestScore, gameDuration])
 
   const changeDifficultyLevel = (
     difficultyLevel: DiffucultyLevelType
   ): void => {
     setGameStatus(GameStatus.GameWorks)
-    setDifficultyLevel(difficultyLevel)
+    setGameDifficultyLevel(difficultyLevel)
     setFirstCell(undefined)
     setCells(
       generateCells(difficultyLevel.boardWidth, difficultyLevel.boardHeight)
+    )
+
+    clearInterval(gameInterval.current)
+    setGameDuration(0)
+    setBestScore(
+      localStorage.getItem(
+        'minesweeperBestScore'.concat(difficultyLevel.level.toString())
+      )
+        ? Number(
+            localStorage.getItem(
+              'minesweeperBestScore'.concat(difficultyLevel.level.toString())
+            )
+          )
+        : -1
     )
   }
 
   const onCellLeftClick = (board: CellType[][], x: number, y: number): void => {
     let newCells
+
     if (firstCell === undefined) {
       setFirstCell({ x, y })
-      newCells = generateMines(cells, difficultyLevel, { x, y })
+      newCells = generateMines(cells, gameDifficultyLevel, { x, y })
       setCells(newCells)
 
       gameInterval.current = setInterval(() => {
         setGameDuration((gameDuration) => gameDuration + 1)
       }, 1000)
     }
+
     if (gameStatus === GameStatus.GameWorks) {
       const [newBoard, newGameStatus] = openCells(
         newCells ?? board,
         x,
         y,
-        difficultyLevel
+        gameDifficultyLevel
       )
 
       if (newGameStatus) {
@@ -79,28 +111,24 @@ export const App = (): JSX.Element => {
     setGameDuration(0)
   }
 
-  useEffect(() => {
-    if (
-      gameStatus === GameStatus.GameOver ||
-      gameStatus === GameStatus.GameWon
-    ) {
-      clearInterval(gameInterval.current)
-    }
-  }, [gameStatus])
+  const displayBestTime = (bestTime: number): string => {
+    return bestTime > 0 ? bestTime.toString() : 'No record set'
+  }
 
   return (
-    <div className="flex flex-col flex-wrap items-center content-center justify-center min-h-screen text-white bg-slate-800">
-      <div className="md:[&>*]:mx-2 lg:[&>*]:mx-4 xl:[&>*]:mx-8 flex md:block flex-col">
-        <div className="order-1 inline-block w-full mt-1 mb-3 text-center md:m-0 md:w-auto">
+    <div className="flex flex-col flex-wrap items-center content-center justify-center min-h-screen text-white md:gap-4 bg-slate-800">
+      <h1 className="md:text-lg">Minesweeper</h1>
+      <div className="md:[&>*]:mx-2 lg:[&>*]:mx-4 xl:[&>*]:mx-8 flex flex-col md:flex-row gap-2">
+        <div className="order-1 inline-block w-full mb-2 text-center md:order-none md:mb-0 md:w-auto">
           <h3 className="md:w-32">Time</h3>
           <h4>{gameDuration}</h4>
         </div>
         <div className="inline-block w-50 md:w-auto">
-          <h1 className="text-2xl text-center md:text-4xl">
+          <h2 className="text-2xl text-center md:text-4xl">
             {gameStatusInformation(gameStatus)}
-          </h1>
+          </h2>
           <h2
-            className="px-3 py-1 my-2 font-medium text-center rounded-md cursor-pointer md:my-3 md:text-xl bg-slate-700 hover:bg-slate-500"
+            className="px-3 py-1 mt-2 font-medium text-center rounded-md cursor-pointer md:mt-5 md:text-xl bg-slate-700 hover:bg-slate-400"
             onClick={onGameRestart}
           >
             Restart game
@@ -109,7 +137,7 @@ export const App = (): JSX.Element => {
         <div className="inline-block w-full text-center md:w-auto">
           <h3 className="md:w-32">Flags placed (mines)</h3>
           <h4>
-            {countFlaggedCells(cells)} ({difficultyLevel.minesNumber})
+            {countFlaggedCells(cells)} ({gameDifficultyLevel.minesNumber})
           </h4>
         </div>
       </div>
@@ -117,7 +145,7 @@ export const App = (): JSX.Element => {
       <div className="flex justify-center select-none">
         <div
           style={{
-            gridTemplateColumns: `repeat(${difficultyLevel.boardWidth}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${gameDifficultyLevel.boardWidth}, minmax(0, 1fr))`,
           }}
           className="grid gap-[2px] p-1 md:p-2 lg:p-3 md:gap-1 bg-slate-700"
           onContextMenu={(
@@ -141,26 +169,34 @@ export const App = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="flex justify-center w-full mt-3 md:text-xl">
-        {difficultyLevels.map((difficultyLevel) => (
-          <DifficultyLevelButton
-            key={difficultyLevel.level}
-            difficultyLevel={difficultyLevel.level}
-            onSetDifficultyLevel={(): void =>
-              changeDifficultyLevel(difficultyLevel)
-            }
-          />
-        ))}
+      <div className="flex gap-8 mt-3 md:text-xl">
+        <div className="text-center">
+          <h3>Best time</h3>
+          <h4>{displayBestTime(bestScore)}</h4>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-wrap">
+            {difficultyLevels.map((diffLevel) => (
+              <DifficultyLevelButton
+                key={diffLevel.level}
+                difficultyLevel={diffLevel.level}
+                isSelected={diffLevel.level === gameDifficultyLevel.level}
+                onSetDifficultyLevel={(): void =>
+                  changeDifficultyLevel(diffLevel)
+                }
+              />
+            ))}
+          </div>
+          <h3 className="mt-1 text-center md:text-lg">Difficulty Level</h3>
+        </div>
       </div>
-
-      <h3 className="mt-1 md:text-lg">Difficulty Level</h3>
     </div>
   )
 }
 
 const gameStatusInformation = (gameStatus: GameStatus): string => {
   const gameInformation = {
-    GameWorks: 'The game is on!',
+    GameWorks: 'Play!',
     GameOver: 'Game Over!',
     GameWon: 'You won!',
   }
