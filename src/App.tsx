@@ -120,8 +120,8 @@ export const App = (): JSX.Element => {
       <h1 className="md:text-lg">Minesweeper</h1>
       <div className="md:[&>*]:mx-2 lg:[&>*]:mx-4 xl:[&>*]:mx-8 flex flex-col md:flex-row gap-2">
         <div className="order-1 inline-block w-full mb-2 text-center md:order-none md:mb-0 md:w-auto">
-          <h3 className="md:w-32">Time</h3>
-          <h4>{gameDuration}</h4>
+          <h2 className="md:w-32">Time</h2>
+          <h3>{gameDuration}</h3>
         </div>
         <div className="inline-block w-50 md:w-auto">
           <h2 className="text-2xl text-center md:text-4xl">
@@ -135,10 +135,10 @@ export const App = (): JSX.Element => {
           </h3>
         </div>
         <div className="inline-block w-full text-center md:w-auto">
-          <h3 className="md:w-32">Flags placed (mines)</h3>
-          <h4>
+          <h2 className="md:w-32">Flags placed (mines)</h2>
+          <h3>
             {countFlaggedCells(cells)} ({gameDifficultyLevel.minesNumber})
-          </h4>
+          </h3>
         </div>
       </div>
 
