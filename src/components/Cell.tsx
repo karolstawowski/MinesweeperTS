@@ -17,14 +17,14 @@ export const Cell = ({
   minesAround,
 }: CellProps): JSX.Element => {
   const handleRightClick = (
-    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ): void => {
     e.preventDefault()
     onCellRightClick()
   }
 
   return (
-    <span
+    <button
       style={{ color: getCellTextColor(minesAround) }}
       className={`${getCellBackgroundColor(
         isOpen,
@@ -32,11 +32,11 @@ export const Cell = ({
       )} font-extrabold w-5 h-5 text-sm lg:w-7 lg:h-7 xl:w-8 xl:h-8 lg:text-xl text-center hover:cursor-pointer xl:text-2xl`}
       onClick={onCellLeftClick}
       onContextMenu={(
-        e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
       ): void => handleRightClick(e)}
     >
       {getCellText(isGameWon, isOpen, isMarked, isMine, minesAround)}
-    </span>
+    </button>
   )
 }
 
