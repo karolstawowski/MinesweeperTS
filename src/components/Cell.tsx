@@ -5,6 +5,8 @@ type CellProps = {
   onCellLeftClick: () => void
   onCellRightClick: () => void
   isGameWon: boolean
+  x: number
+  y: number
 } & CellType
 
 export const Cell = ({
@@ -15,6 +17,8 @@ export const Cell = ({
   isOpen,
   isMarked,
   minesAround,
+  x,
+  y,
 }: CellProps): JSX.Element => {
   const handleRightClick = (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
@@ -22,6 +26,8 @@ export const Cell = ({
     e.preventDefault()
     onCellRightClick()
   }
+
+  const ariaLabel = 'X axis: ' + x + ', Y axis: ' + y
 
   return (
     <button
@@ -34,6 +40,7 @@ export const Cell = ({
       onContextMenu={(
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
       ): void => handleRightClick(e)}
+      aria-label={ariaLabel}
     >
       {getCellText(isGameWon, isOpen, isMarked, isMine, minesAround)}
     </button>

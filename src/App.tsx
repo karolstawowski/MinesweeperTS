@@ -163,6 +163,8 @@ export const App = (): JSX.Element => {
                 isOpen={cell.isOpen}
                 isMarked={cell.isMarked}
                 minesAround={cell.minesAround}
+                x={i}
+                y={j}
               />
             ))
           )}
