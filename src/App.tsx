@@ -127,12 +127,12 @@ export const App = (): JSX.Element => {
           <h2 className="text-2xl text-center md:text-4xl">
             {gameStatusInformation(gameStatus)}
           </h2>
-          <h2
+          <h3
             className="px-3 py-1 mt-2 font-medium text-center rounded-md cursor-pointer md:mt-5 md:text-xl bg-slate-700 hover:bg-slate-400"
             onClick={onGameRestart}
           >
             Restart game
-          </h2>
+          </h3>
         </div>
         <div className="inline-block w-full text-center md:w-auto">
           <h3 className="md:w-32">Flags placed (mines)</h3>

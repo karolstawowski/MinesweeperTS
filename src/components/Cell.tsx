@@ -24,7 +24,7 @@ export const Cell = ({
   }
 
   return (
-    <a
+    <span
       style={{ color: getCellTextColor(minesAround) }}
       className={`${getCellBackgroundColor(
         isOpen,
@@ -36,7 +36,7 @@ export const Cell = ({
       ): void => handleRightClick(e)}
     >
       {getCellText(isGameWon, isOpen, isMarked, isMine, minesAround)}
-    </a>
+    </span>
   )
 }
 
