@@ -19,5 +19,6 @@ The objective of the game is to open all cells of the game board which are not m
 
 - React.js 
 - TypeScript
+- Tailwind
 - Vite
 - tabler-icons
