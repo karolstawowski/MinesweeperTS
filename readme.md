@@ -17,4 +17,8 @@ The objective of the game is to open all cells of the game board which are not m
 
 ## Tools and technologies
 
-React, TypeScript, Vite, tabler-icons.
+- React.js 
+- TypeScript
+- Tailwind
+- Vite
+- tabler-icons
