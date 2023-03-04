@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Cell } from './components/Cell'
 import { DifficultyLevelButton } from './components/DifficultyLevelButton'
+import { GameBoard } from './components/GameBoard'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { difficultyLevels, DiffucultyLevelType } from './utils/difficultyLevel'
 import {
@@ -12,6 +12,7 @@ import {
   openCells,
   placeMarker,
 } from './utils/game'
+import { gameStatusInformation } from './utils/gameStatusInformation'
 
 export const App = (): JSX.Element => {
   const [gameDifficultyLevel, setGameDifficultyLevel] =
@@ -142,34 +143,13 @@ export const App = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="flex justify-center select-none">
-        <div
-          style={{
-            gridTemplateColumns: `repeat(${gameDifficultyLevel.boardWidth}, minmax(0, 1fr))`,
-          }}
-          className="grid gap-[2px] p-1 md:p-2 lg:p-3 md:gap-1 bg-slate-700"
-          onContextMenu={(
-            e: React.MouseEvent<HTMLDivElement, MouseEvent>
-          ): void => e.preventDefault()}
-        >
-          {cells.map((cellsRow, j) =>
-            cellsRow.map((cell, i) => (
-              <Cell
-                key={j + i}
-                onCellLeftClick={(): void => onCellLeftClick(cells, i, j)}
-                onCellRightClick={(): void => onCellRightClick(i, j)}
-                isGameWon={gameStatus === GameStatus.GameWon}
-                isMine={cell.isMine}
-                isOpen={cell.isOpen}
-                isMarked={cell.isMarked}
-                minesAround={cell.minesAround}
-                x={i}
-                y={j}
-              />
-            ))
-          )}
-        </div>
-      </div>
+      <GameBoard
+        cells={cells}
+        gameDifficultyLevel={gameDifficultyLevel}
+        gameStatus={gameStatus}
+        onCellLeftClick={onCellLeftClick}
+        onCellRightClick={onCellRightClick}
+      />
 
       <div className="flex gap-8 mt-3 md:text-xl">
         <div className="text-center">
@@ -194,14 +174,4 @@ export const App = (): JSX.Element => {
       </div>
     </div>
   )
-}
-
-const gameStatusInformation = (gameStatus: GameStatus): string => {
-  const gameInformation = {
-    GameWorks: 'Play!',
-    GameOver: 'Game Over!',
-    GameWon: 'You won!',
-  }
-
-  return gameInformation[gameStatus]
 }
