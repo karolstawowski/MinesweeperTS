@@ -35,7 +35,7 @@ export const Cell = ({
       className={`${getCellBackgroundColor(
         isOpen,
         isMine
-      )} font-extrabold w-5 h-5 text-sm lg:w-7 lg:h-7 xl:w-8 xl:h-8 lg:text-xl text-center hover:cursor-pointer xl:text-2xl`}
+      )} w-8 h-8 text-xl font-extrabold text-center md:w-7 md:h-7 xl:w-8 xl:h-8 sm:text-lg md:text-md lg:text-xl hover:cursor-pointer xl:text-2xl`}
       onClick={onCellLeftClick}
       onContextMenu={(
         e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>

@@ -23,7 +23,7 @@ export const GameBoard = ({
         style={{
           gridTemplateColumns: `repeat(${gameDifficultyLevel.boardWidth}, minmax(0, 1fr))`,
         }}
-        className="grid gap-[2px] p-1 md:p-2 lg:p-3 md:gap-1 bg-slate-700"
+        className="grid gap-1 p-2 md:p-2 lg:p-3 bg-slate-700"
         onContextMenu={(
           e: React.MouseEvent<HTMLDivElement, MouseEvent>
         ): void => e.preventDefault()}
