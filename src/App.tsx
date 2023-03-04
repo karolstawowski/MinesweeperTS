@@ -125,7 +125,7 @@ export const App = (): JSX.Element => {
           <h3>{gameDuration}</h3>
         </div>
         <div className="inline-block w-50 md:w-auto">
-          <h2 className="text-2xl text-center md:text-4xl">
+          <h2 className="text-2xl font-semibold text-center md:text-4xl">
             {gameStatusInformation(gameStatus)}
           </h2>
           <h3
